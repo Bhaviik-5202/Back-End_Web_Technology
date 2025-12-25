@@ -1,0 +1,27 @@
+<!-- 5. WAP in JavaScript to check whether the given number is palindrome or not. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindrome number</title>
+</head>
+
+<body>
+    <script>
+        const num = parseInt(prompt("Enter the number : "));
+
+        let cp = num;
+        let temp = 0;
+        while (cp != 0) {
+            temp = (temp * 10) + (cp % 10);
+            cp = parseInt(cp / 10);
+        }
+        if (temp == num) alert("Number is palindrome.");
+        else alert("Number is not palindrome.");
+    </script>
+</body>
+
+</html>

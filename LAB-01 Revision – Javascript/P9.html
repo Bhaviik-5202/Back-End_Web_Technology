@@ -1,0 +1,62 @@
+<!-- 9. WAP to display given patterns using JavaScript. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patterns</title>
+
+    <script>
+        const n = parseInt(prompt("Enter the number of row : "));
+        // 1
+        console.log("1");
+        for (let i = 0; i < n; i++) {
+            let pattern = "";
+            for (let j = 0; j <= i; j++) pattern += "* ";
+            console.log(pattern);
+        }
+        // 2
+        console.log("2");
+        for (let i = 0; i < n; i++) {
+            let pattern = "";
+            for (let k = 0; k < (n - i - 1); k++) pattern += "  ";
+            for (let j = 0; j <= i; j++) pattern += "* ";
+            console.log(pattern);
+        }
+        // 3
+        console.log("3");
+        for (let i = 0; i < n; i++) {
+            let pattern = "";
+            for (let k = 0; k < (n - i - 1); k++) pattern += "  ";
+            for (let j = 0; j < (2 * i + 1); j++) pattern += "* ";
+            console.log(pattern);
+        }
+        // 4
+        console.log("4");
+        let k = 1;
+        for (let i = 0; i < n; i++) {
+            let pattern = "";
+            for (let j = 0; j <= i; j++) pattern += (k++ + " ");
+            console.log(pattern);
+        }
+        // 5
+        console.log("5");
+        for (let i = 0; i < n; i++) {
+            let pattern = "";
+            for (let k = 0; k < (n - i - 1); k++) pattern += "  ";
+            for (let j = 0; j < (2 * i + 1); j++) {
+                if (j == 0 || j == 2 * i || i == n - 1) pattern += "* ";
+                else pattern += "  ";
+            }
+            console.log(pattern);
+        }
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

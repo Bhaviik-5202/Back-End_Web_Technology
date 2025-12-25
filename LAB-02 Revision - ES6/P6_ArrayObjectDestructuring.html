@@ -1,0 +1,31 @@
+<!-- 6. Demonstrate the Array and Object Destructuring. (B)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destructuring</title>
+
+    <script>
+        // Array Destructuring
+        const ary = [10, 50, 60, 80, 100];
+        const [a, b] = ary; // copy first element in a and second element in b
+        console.log(a, b);
+
+        const [c, , d] = ary;
+        console.log(c, d);  // skip second element and copy third element in d 
+
+        // object Destructuring 
+        const obj = {name: "Yash", age: 18, spi: 2.2}
+        const {name, spi} = obj; // variable name same as object key name
+        console.log(name, spi); 
+
+        const {age} = obj;
+        console.log(age);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

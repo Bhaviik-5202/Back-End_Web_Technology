@@ -1,0 +1,27 @@
+<!-- 7. WAP in JavaScript to print the factors of given number. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>factors of given number</title>
+</head>
+
+<body>
+    <script>
+        let num = parseInt(prompt("Enter the number : "));
+        let answer = "";
+
+        if (isNaN(num)) alert("Enter valid input!");
+        else {
+            for (let i = 1; i <= num; i++) {
+                if (num % i == 0) answer += (i + ' ');
+            }
+            document.write(answer);
+        }
+    </script>
+</body>
+
+</html>

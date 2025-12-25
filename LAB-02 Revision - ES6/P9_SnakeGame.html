@@ -1,0 +1,156 @@
+<!-- 9. Create a Snake game using Java script. (C)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            height: 95vh;
+            border: red 1px solid;
+            padding: 10px;
+        }
+
+        .gameZoneDiv {
+            height: 100%;
+        }
+
+        #gameArea {
+            height: 85%;
+            position: relative;
+            border: purple 1px solid;
+        }
+        /* snake img */
+        #nagin {
+            border: black 1px solid;
+            height: 150px;
+            position: absolute;
+        }
+        .controls {
+            height: 13%;
+            margin-top: 1%;
+            text-align: center;
+            vertical-align: bottom;
+        }
+        /* arrow Img */
+        .arrowImg {
+            height: 95px;
+            width: 95px;
+            vertical-align: middle;
+        }
+        /* arrow Button */
+        .controlBtn {
+            padding: 0px;
+            border: 1px solid;
+            height: 100px;
+            width: 100px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gameZoneDiv">
+        <!-- Snake area  -->
+        <div id="gameArea">
+            <img id="nagin"  src="./IMGs/snakeIMGL.jpg" alt="nagin">
+            <!-- <img id="apple" src="./appleIMG.webp" alt=""> -->
+        </div>
+
+        <!-- game controls -->
+        <div class="controls">
+            <button onclick="startUp()" class="controlBtn"><img class="arrowImg" src="./IMGs/up-arrow.svg" alt="up"></button><br>
+            <button onclick="startLeft()" class="controlBtn"><img class="arrowImg" src="./IMGs/left-arrow.svg" alt="left"></button>
+            <button onclick="startDown()" class="controlBtn"><img class="arrowImg" src="./IMGs/down-arrow.svg" alt="down"></button>
+            <button onclick="startRight()" class="controlBtn"><img class="arrowImg" src="./IMGs/right-arrow.svg" alt="right"></button>
+        </div>
+    </div>
+
+    <script>
+        // snake refference
+        let snakeRef = document.getElementById("nagin");
+
+        // game Area refference
+        const gameArea = document.getElementById("gameArea");
+
+        // define current positions 
+        let currentX = 0;
+        let currentY = 0;
+
+        // clare Interval mate
+        let clearInt = 0;
+
+        // snake speed 
+        let sSpeed = 10;
+
+        // starter function 
+        function startUp(){
+            clearInterval(clearInt);
+            clearInt = setInterval(upSanke, sSpeed);
+        }
+        function startLeft(){
+            clearInterval(clearInt);
+            clearInt = setInterval(leftSnake, sSpeed);
+        }
+        function startDown(){
+            clearInterval(clearInt);
+            clearInt = setInterval(downSnake, sSpeed);
+        }
+        function startRight(){
+            clearInterval(clearInt);
+            clearInt = setInterval(rightSnake, sSpeed);
+        }
+
+        // move logic functions
+        function upSanke() {
+            snakeRef.src = "IMGs/snakeImgU.jpg";
+            currentY--;
+            snakeRef.style.top = currentY + 'px';
+            checkLimit();
+        }
+        function leftSnake() {
+            snakeRef.src = "IMGs/snakeImgL.jpg";
+            currentX--;
+            snakeRef.style.left = currentX + 'px';
+            checkLimit();
+        }
+        function downSnake() {
+            snakeRef.src = "IMGs/snakeImgD.jpg";
+            currentY++;
+            snakeRef.style.top = currentY + 'px';
+            checkLimit();
+        }
+        function rightSnake() {
+            snakeRef.src = "IMGs/snakeImgR.jpg";
+            currentX++;
+            snakeRef.style.left = currentX + 'px';
+            checkLimit();
+        }
+
+        // function which is check limits
+        function checkLimit() {
+            // game area width and height
+            const areaWidth = gameArea.clientWidth;
+            const areaHeight = gameArea.clientHeight;
+
+            // snak img width and height
+            const snakWidth = snakeRef.clientWidth;
+            const snakHeight = snakeRef.clientHeight;
+
+            if(currentX < 0 ||  currentX+snakWidth > areaWidth || currentY < 0 || currentY+snakHeight > areaHeight) {
+                currentX = (areaWidth-snakWidth)/2;
+                currentY = (areaHeight-snakHeight)/2;
+
+                snakeRef.style.left = currentX + 'px';
+                snakeRef.style.top = currentY + 'px';
+            }
+        }
+
+        // pendding work:
+            // apple positions
+            // life 
+            // score
+    </script>
+</body>
+</html>

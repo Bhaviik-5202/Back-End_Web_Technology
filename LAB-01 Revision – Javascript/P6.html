@@ -1,0 +1,38 @@
+<!-- 6. WAP in JavaScript to check whether the given number is Armstrong or not. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armstrong</title>
+</head>
+
+<body>
+    <script>
+        const num = parseInt(prompt("Enter the number : "));
+
+        let cpy = num;
+        let digit = 0;
+        while (cpy != 0) {
+            digit++;
+            cpy = parseInt(cpy / 10);
+        }
+
+        cpy = num;
+        let sum = 0;
+        while (cpy != 0) {
+            let temp = 1;
+            for (let i = 0; i < digit; i++) temp *= (cpy % 10);
+            console.log(temp)
+            sum += temp;
+            cpy = parseInt(cpy / 10);
+        }
+
+        if (sum == num) alert("Number is armstrong.");
+        else alert("Number is not armstrong");
+    </script>
+</body>
+
+</html>

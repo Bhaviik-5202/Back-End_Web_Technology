@@ -1,0 +1,44 @@
+<!-- 8. WAP in JavaScript to prime number between the given range of number. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prime range</title>
+</head>
+
+<body>
+  <script>
+    function prime(num) {
+      let count = 0;
+      for (let i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+          count++;
+          break;
+        }
+      }
+      return count;
+    }
+
+    let a = parseInt(prompt("Enter the first number : "));
+    let b = parseInt(prompt("Enter the second number : "));
+
+    if (isNaN(a) || isNaN(b)) alert("Enter valid inpur!");
+    else if (a <= 1 && b <= 1) alert("Enter valid range");
+    else {
+      let min = Math.min(a, b);
+      let max = Math.max(a, b);
+      let primeNum = "";
+
+      for (let i = min; i <= max; i++) {
+        if (prime(i) == 0) primeNum += (' ' + i);
+      }
+
+      document.writeln(primeNum)
+    }
+  </script>
+</body>
+
+</html>

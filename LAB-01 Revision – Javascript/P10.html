@@ -1,0 +1,33 @@
+<!-- 10. WAP in JavaScript to print the GCD of two number. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCD</title>
+</head>
+
+<body>
+    <script>
+        let a = parseInt(prompt("Enter the first number : "));
+        let b = parseInt(prompt("Enter the second number : "));
+
+        if (isNaN(a) || isNaN(b)) alert("Enter valid input!");
+        else {
+            let min = Math.min(a, b);
+            let max = Math.max(a, b);
+
+            while (true) {
+                let rem = max % min;
+                if (rem == 0) break;
+                max = min;
+                min = rem;
+            }
+            console.log(min);
+        }
+    </script>
+</body>
+
+</html>

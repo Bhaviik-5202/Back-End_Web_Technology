@@ -1,0 +1,28 @@
+<!-- 4. WAP in JavaScript to print the Fibonacci series of a number. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fibonacci series</title>
+</head>
+
+<body>
+    <script>
+        const steps = parseInt(prompt("Enter the number of steps you want to print :"));
+
+        let first = 0;
+        let second = 1;
+
+        for (let i = 1; i <= steps; i++) {
+            console.log(first);
+            let third = first + second;
+            first = second;
+            second = third;
+        }
+    </script>
+</body>
+
+</html>

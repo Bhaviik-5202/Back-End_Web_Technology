@@ -1,0 +1,32 @@
+<!-- 4. Demonstrate the spread operator. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spread Operator</title>
+
+    <script>
+        let ShoppingList = [];
+
+        function addInList(item, List) {
+            ShoppingList = [...List, item];
+        }
+
+        function printList(List) {
+            console.log(List);
+        }
+
+        addInList("Protin", ShoppingList);
+        addInList("GymWare", ShoppingList);
+        addInList("GymWare", ShoppingList);
+        addInList("boots", ShoppingList);
+
+        printList(ShoppingList);
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

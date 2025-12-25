@@ -1,0 +1,28 @@
+-- Create a new folder npm-lab-1 and initialize a Node project using npm.
+    mkdir npm-lab-1 
+    cd npm-lab-1
+    npm init 
+
+-- Compare the difference between npm init and npm init -y
+
+-- Install the package named "cors" using npm.
+    npm install cors
+
+-- Install the package named "nodemon" globally using npm
+    npm install -g nodemon
+
+-- Install the package named "express" with version "4.21.1" locally
+    npm install express@4.21.1
+
+-- Update the previously installed old version of express
+    npm update express
+
+-- Uninstall all the package that are locally installed in this lab
+    npm uninstall cors express
+
+-- Uninstall globally installed "nodemon" package
+    npm uninstall -g nodemon
+
+-- practice installing multiple packages using package.json
+-- write a detailed note on package .json
+-- List all local packages

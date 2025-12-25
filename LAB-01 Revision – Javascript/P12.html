@@ -1,0 +1,45 @@
+<!-- 12. Write an HTML page with JavaScript that takes a number from popup box in the range 0-999 
+and display it in words. If the number is out of range, it should show “out of range” and if it is 
+not a number ,it should show “not a number” message in the result box. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digits to Words</title>
+</head>
+
+<body>
+  <script>
+    let num = parseInt(prompt("Enter the number : "));
+    let ones = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+    let eles = ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+    let tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+
+    let words = "";
+
+    if (num < 0 || num > 999) alert("out of range ");
+    else if (isNaN(num)) alert("not a number ");
+    else {
+      if (num < 10) words = ones[num];
+      else if (num < 20) words = eles[num - 10];
+      else if (num < 100) words = (tens[parseInt(num / 10)] + " " + (num % 10 ? ones[num % 10] : ""));
+      else {
+        h = parseInt(num / 100);
+        t = parseInt(num % 100);
+
+        console.log(t);
+        words = ones[h] + " Hundred ";
+
+        if (t < 10) words += (t ? ones[t] : "");
+        else if (t < 20) words += eles[t - 10];
+        else if (t < 100) words += (tens[parseInt(t / 10)] + " " + (t % 10 ? ones[t % 10] : ""));
+      }
+    }
+    document.writeln(words);
+  </script>
+</body>
+
+</html>

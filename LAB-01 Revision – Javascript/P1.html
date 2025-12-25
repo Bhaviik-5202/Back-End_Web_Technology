@@ -1,0 +1,35 @@
+<!-- 1. WAP in JavaScript to make simple calculator using popup box. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+</head>
+
+<body>
+    <script>
+        const a = parseInt(prompt("Enter the first valuse : "));
+        const b = parseInt(prompt("Enter the second valuse : "));
+        const op = prompt("Which operation you want to perform : ");
+
+        switch (op) {
+            case '+': res = a + b
+                break;
+            case '-': res = a - b
+                break;
+            case '*': res = a * b
+                break;
+            case '/': if (b === 0) res = "undefined";
+            else res = a / b;
+                break;
+            default: res = "Plz Enter valid operation";
+        }
+
+        alert("Answer = " + res);
+    </script>
+</body>
+
+</html>

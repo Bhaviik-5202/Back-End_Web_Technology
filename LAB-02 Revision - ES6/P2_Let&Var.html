@@ -1,0 +1,47 @@
+<!-- 2. Demonstrate the difference between let and var. (A)  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diff between let and var</title>
+
+    <script>
+        // let is block scope
+            // {
+            //     let a = 10;
+            //     console.log(a); // 10
+            // }
+            // console.log(a); // Uncaught ReferenceError: a is not defined
+        
+        
+        // var is function scope
+            // function chackVar() {
+            //     {
+            //         var a = 10;
+            //         console.log(a);
+            //     }
+            //     console.log(a);
+            // }
+            // chackVar();
+
+
+        // let: not redeclare
+            // {
+                // let a = 10;
+                // let a = 20; // error
+            // }
+
+
+        // var: redeclare
+            // {
+            //     var a = 10;
+            //     var a = 70; // work it
+            // }
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
