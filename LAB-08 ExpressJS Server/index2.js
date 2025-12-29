@@ -1,3 +1,4 @@
+// Create a webapp with 5 pages like about, contact etc.. using ExpressJS. (B)
 const express = require('express');
 const { log } = require('node:console');
 
