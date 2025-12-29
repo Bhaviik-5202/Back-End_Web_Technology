@@ -1,3 +1,4 @@
+//  Demonstrate the use of middleware in Express. (A) 
 const express = require('express');
 const app = express();
 
