@@ -1,3 +1,4 @@
+// Create a hello world webapp using “http” core module in NodeJS. (A)
 const http = require('http');
 
 const server = http.createServer((req,res) => {
