@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-const PORT = 3070;
+const PORT = 3030;
 
 const MONGO_URI = "mongodb://localhost:27017/Student_DB";
 

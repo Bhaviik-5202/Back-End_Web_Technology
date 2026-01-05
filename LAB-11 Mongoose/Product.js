@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const app = express();
-const PORT = 3060;
+const PORT = 3020;
 
 const DB_API = "mongodb://localhost:27017/Product_DB";
 
