@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Library from "./Library.jsx";
 
-function App() {
+function Home() {
   const [books, setBooks] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
@@ -12,54 +14,52 @@ function App() {
 
   const API_URL = "http://localhost:5000/api/books";
 
-  // Fetch books from Backend
   const fetchBooks = async () => {
     try {
       const res = await axios.get(API_URL);
-      setBooks(res.data);
+      return res.data;
     } catch (err) {
       console.error("Error fetching books:", err);
+      return [];
     }
   };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        // Ensure the URL matches your backend's running port (usually 5000)
-        const res = await axios.get("http://localhost:5000/api/books");
-        setBooks(res.data);
-      } catch (err) {
-        // This will tell you if it is a Network Error or CORS issue
-        console.error("Fetch Error:", err.message);
-      }
-    };
+    let mounted = true;
 
-    fetchBooks();
+    async function loadBooks() {
+      const books = await fetchBooks();
+      if (mounted) setBooks(books);
+    }
+
+    loadBooks();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // Handle Input Changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle Form Submission (Create Book)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post(API_URL, formData);
-      setFormData({ title: "", author: "", isbn: "", category: "" }); // Reset form
-      fetchBooks(); // Refresh list
+      setFormData({ title: "", author: "", isbn: "", category: "" });
+      const booksData = await fetchBooks();
+      setBooks(booksData);
       alert("Book added successfully!");
     } catch (err) {
       alert("Error adding book: " + err.response?.data?.message);
     }
   };
 
-  // Handle Delete
   const deleteBook = async (id) => {
     if (window.confirm("Delete this book?")) {
       await axios.delete(`${API_URL}/${id}`);
-      fetchBooks();
+      const booksData = await fetchBooks();
+      setBooks(booksData);
     }
   };
 
@@ -67,7 +67,6 @@ function App() {
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1>Library Management System</h1>
 
-      {/* ADD BOOK FORM */}
       <div
         style={{
           marginBottom: "30px",
@@ -117,7 +116,6 @@ function App() {
         </form>
       </div>
 
-      {/* BOOK LIST */}
       <h3>Available Books</h3>
       <table
         border="1"
@@ -150,8 +148,20 @@ function App() {
           ))}
         </tbody>
       </table>
+      <div style={{ marginTop: 20 }}>
+        <Link to="/library">Go to Library In/Out</Link>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/library" element={<Library />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
