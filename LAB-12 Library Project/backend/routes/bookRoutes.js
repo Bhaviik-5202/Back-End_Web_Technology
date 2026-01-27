@@ -1,32 +1,14 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const router = express.Router();
 const Book = require("../models/Book");
+const auth = require("../middlewares/auth");
 
-/* =========================================================
-   GET /books?q=searchText
-   Search by title, author, isbn, category
-========================================================= */
-router.get("/", async (req, res) => {
+const router = express.Router();
+
+// GET ALL BOOKS
+
+router.get("/all", async (req, res) => {
   try {
-    const { q } = req.query;
-
-    let filter = {};
-
-    if (q && q.trim()) {
-      const regex = new RegExp(q.trim(), "i");
-      filter = {
-        $or: [
-          { title: regex },
-          { author: regex },
-          { isbn: regex },
-          { category: regex },
-        ],
-      };
-    }
-
-    const books = await Book.find(filter).sort({ createdAt: -1 });
-
+    const books = await Book.find();
     res.status(200).json({
       success: true,
       total: books.length,
@@ -41,13 +23,96 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* =========================================================
-   POST /books
-   Add new book
-========================================================= */
-router.post("/", async (req, res) => {
+// SEARCH + PAGINATION
+// search by author name
+// /books/search?n=abc&page=1&limit=5
+
+router.get("/search", async (req, res) => {
   try {
-    const { title, author, isbn, category, isAvailable } = req.body;
+    const { n, page = 1, limit = 5 } = req.query;
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+
+    let filter = {};
+    if (n) {
+      filter.$or = [
+        { title: { $regex: n, $options: "i" } },
+        { author: { $regex: n, $options: "i" } },
+      ];
+    }
+
+    const skip = (pageNum - 1) * limitNum;
+
+    const data = await Book.find(filter).skip(skip).limit(limitNum);
+
+    const totalRecords = await Book.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      totalRecords,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(totalRecords / limitNum),
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Search failed",
+      error: error.message,
+    });
+  }
+});
+
+// GET BOOK BY TITLE
+
+router.get("/by-title", async (req, res) => {
+  try {
+    const { title } = req.query;
+
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Title is required",
+      });
+    }
+
+    const book = await Book.findOne({
+      title: { $regex: title, $options: "i" },
+    });
+
+    if (!book) {
+      return res.status(404).json({
+        success: false,
+        message: "Book not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: book,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching book",
+      error: error.message,
+    });
+  }
+});
+
+// ADD BOOK
+
+router.post("/", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Admin only.",
+      });
+    }
+    const { title, author, price } = req.body;
 
     if (!title || !author) {
       return res.status(400).json({
@@ -56,90 +121,61 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const book = await Book.create({
-      title,
-      author,
-      isbn,
-      category,
-      isAvailable,
-    });
+    const newBook = await Book.create({ title, author, price: Number(price) });
 
     res.status(201).json({
       success: true,
       message: "Book added successfully",
-      data: book,
+      data: newBook,
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       success: false,
-      message: "Failed to add book",
+      message: "Error adding book",
       error: error.message,
     });
   }
 });
 
-/* =========================================================
-   DELETE /books/:id
-========================================================= */
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
+// DELETE BOOK BY TITLE
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid Book ID" });
+router.delete("/by-title", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Admin only.",
+      });
+    }
+    const { title } = req.query;
+
+    if (!title) {
+      return res.status(400).json({
+        success: false,
+        message: "Title is required",
+      });
     }
 
-    const book = await Book.findByIdAndDelete(id);
+    const deletedBook = await Book.findOneAndDelete({
+      title: { $regex: title, $options: "i" },
+    });
 
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
+    if (!deletedBook) {
+      return res.status(404).json({
+        success: false,
+        message: "Book not found",
+      });
     }
 
     res.status(200).json({
       success: true,
       message: "Book deleted successfully",
+      deleted: deletedBook,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to delete book",
-      error: error.message,
-    });
-  }
-});
-
-/* =========================================================
-   PATCH /books/:id/availability
-========================================================= */
-router.patch("/:id/availability", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { isAvailable } = req.body;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid Book ID" });
-    }
-
-    const book = await Book.findById(id);
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-
-    // Toggle if value not passed
-    book.isAvailable =
-      typeof isAvailable === "boolean" ? isAvailable : !book.isAvailable;
-
-    await book.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Book availability updated",
-      data: book,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update availability",
+      message: "Error deleting book",
       error: error.message,
     });
   }

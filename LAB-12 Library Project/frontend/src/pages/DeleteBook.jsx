@@ -1,313 +1,113 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-
-// MockAPI.io returns data directly, not wrapped in { data: [...] }
-const API = "https://6881dcdf66a7eb81224c58b1.mockapi.io/Books";
+import { useState } from "react";
+import { useToast } from "../context/ToastContext";
+import { useConfirm } from "../context/ConfirmationContext";
+import { deleteByTitle } from "../api/bookApi";
+import GlassCard from "../components/UI/GlassCard";
+import AnimatedButton from "../components/UI/AnimatedButton";
+import Input from "../components/UI/Input";
+import { Trash2, AlertTriangle, Search } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DeleteBook() {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [deletingId, setDeletingId] = useState(null);
-  const [message, setMessage] = useState("");
+    const [title, setTitle] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [deletedBook, setDeletedBook] = useState(null);
 
-  useEffect(() => {
-    fetchBooks();
-  }, []);
+    const { showToast } = useToast();
+    const confirm = useConfirm();
 
-  const fetchBooks = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.get(API);
-      // MockAPI returns array directly, not res.data.data
-      setBooks(res.data || []);
-    } catch (err) {
-      setMessage("Failed to load books. Please try again.");
-      console.error("Error fetching books:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleDelete = async (e) => {
+        e.preventDefault();
 
-  const handleDelete = async (id, title) => {
-    if (!window.confirm(`Are you sure you want to delete "${title}"?`)) {
-      return;
-    }
+        const isConfirmed = await confirm(
+            `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+            "Delete Book",
+            { confirmText: "Yes, Delete", type: "danger" }
+        );
 
-    setDeletingId(id);
-    setMessage("");
+        if (!isConfirmed) return;
 
-    try {
-      await axios.delete(`${API}/${id}`);
-      // MockAPI uses 'id' field, not '_id'
-      setBooks(books.filter((b) => b.id !== id));
-      setMessage(`✅ "${title}" deleted successfully!`);
-      setTimeout(() => setMessage(""), 3000);
-    } catch (err) {
-      setMessage("❌ Failed to delete book. Please try again.");
-      console.error("Error deleting book:", err);
-    } finally {
-      setDeletingId(null);
-    }
-  };
+        setLoading(true);
+        setDeletedBook(null);
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Manage Books</h2>
-        <p style={styles.subtitle}>Delete books from the library</p>
-      </div>
+        try {
+            const res = await deleteByTitle(title);
+            setDeletedBook({
+                title: res.data.deleted.title,
+                author: res.data.deleted.author
+            });
+            setTitle("");
+            showToast("Book deleted successfully", "success");
+        } catch (err) {
+            showToast(err.response?.data?.message || "Failed to delete book. Check if title is correct.", "error");
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      {message && (
-        <div style={message.includes("✅") ? styles.success : styles.error}>
-          {message}
-        </div>
-      )}
-
-      {loading ? (
-        <div style={styles.loading}>
-          <div style={styles.spinner}></div>
-          <p>Loading books...</p>
-        </div>
-      ) : books.length === 0 ? (
-        <div style={styles.empty}>
-          <p style={styles.emptyText}>No books available to delete</p>
-          <p style={styles.emptyHint}>Add some books first</p>
-        </div>
-      ) : (
-        <div style={styles.booksList}>
-          <div style={styles.listHeader}>
-            <span style={styles.headerText}>Book List</span>
-            <span style={styles.count}>
-              {books.length} {books.length === 1 ? "book" : "books"}
-            </span>
-          </div>
-
-          {books.map((book) => (
-            <div key={book.id} style={styles.bookItem}>
-              <div style={styles.bookInfo}>
-                <h4 style={styles.bookTitle}>{book.title}</h4>
-                <div style={styles.bookDetails}>
-                  <span style={styles.author}>by {book.author}</span>
-                  <span style={styles.isbn}>ISBN: {book.isbn}</span>
-                  {book.category && (
-                    <span style={styles.category}>{book.category}</span>
-                  )}
-                </div>
-              </div>
-
-              <button
-                onClick={() => handleDelete(book.id, book.title)}
-                style={styles.deleteButton}
-                disabled={deletingId === book.id}
-              >
-                {deletingId === book.id ? "Deleting..." : "Delete"}
-              </button>
+    return (
+        <div className="max-w-2xl mx-auto min-h-[70vh] flex flex-col justify-center">
+            <div className="text-center mb-10">
+                <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">
+                    Delete Book
+                </h2>
+                <p className="text-gray-500 mt-2">Permanently remove a book from the library</p>
             </div>
-          ))}
+
+            <GlassCard className="p-8 border-t-4 border-t-red-500">
+                <form onSubmit={handleDelete} className="space-y-6">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                        <AlertTriangle className="text-red-500 shrink-0 mt-1" />
+                        <p className="text-sm text-red-700">
+                            Warning: Deleting a book is permanent. Ensure you have the correct title before proceeding.
+                        </p>
+                    </div>
+
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Input
+                            placeholder="Enter exact book title..."
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            required
+                            className="pl-10"
+                        />
+                    </div>
+
+                    <AnimatedButton
+                        type="submit"
+                        disabled={loading || !title}
+                        className="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 shadow-red-500/30"
+                    >
+                        {loading ? "Deleting..." : <><Trash2 size={20} /> Delete Book</>}
+                    </AnimatedButton>
+                </form>
+            </GlassCard>
+
+            <AnimatePresence>
+                {deletedBook && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="mt-8"
+                    >
+                        <GlassCard className="bg-green-50 border border-green-200">
+                            <div className="flex items-center gap-4 text-green-800">
+                                <div className="p-3 bg-green-200 text-green-700 rounded-full">
+                                    <Trash2 size={24} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-lg">Book Deleted Successfully</h4>
+                                    <p className="text-sm opacity-80">
+                                        Removed: <span className="font-semibold">"{deletedBook.title}"</span> by {deletedBook.author}
+                                    </p>
+                                </div>
+                            </div>
+                        </GlassCard>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
-      )}
-    </div>
-  );
+    );
 }
-
-const styles = {
-  container: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    padding: "24px 20px",
-    minHeight: "calc(100vh - 70px)",
-  },
-
-  header: {
-    marginBottom: "32px",
-  },
-
-  title: {
-    fontSize: "28px",
-    fontWeight: "700",
-    color: "#1f2937",
-    marginBottom: "8px",
-  },
-
-  subtitle: {
-    fontSize: "16px",
-    color: "#6b7280",
-    margin: 0,
-  },
-
-  loading: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "60px 0",
-  },
-
-  spinner: {
-    width: "40px",
-    height: "40px",
-    border: "3px solid #e5e7eb",
-    borderTopColor: "#dc2626",
-    borderRadius: "50%",
-    animation: "spin 1s linear infinite",
-    marginBottom: "16px",
-  },
-
-  empty: {
-    textAlign: "center",
-    padding: "60px 20px",
-    backgroundColor: "#f9fafb",
-    borderRadius: "12px",
-    border: "2px dashed #d1d5db",
-  },
-
-  emptyText: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#4b5563",
-    marginBottom: "8px",
-  },
-
-  emptyHint: {
-    fontSize: "14px",
-    color: "#9ca3af",
-    margin: 0,
-  },
-
-  success: {
-    backgroundColor: "#d1fae5",
-    color: "#065f46",
-    padding: "12px 16px",
-    borderRadius: "8px",
-    border: "1px solid #a7f3d0",
-    marginBottom: "20px",
-    fontSize: "14px",
-  },
-
-  error: {
-    backgroundColor: "#fef2f2",
-    color: "#dc2626",
-    padding: "12px 16px",
-    borderRadius: "8px",
-    border: "1px solid #fecaca",
-    marginBottom: "20px",
-    fontSize: "14px",
-  },
-
-  booksList: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    border: "1px solid #e5e7eb",
-    overflow: "hidden",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
-  },
-
-  listHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "20px 24px",
-    backgroundColor: "#f9fafb",
-    borderBottom: "1px solid #e5e7eb",
-  },
-
-  headerText: {
-    fontSize: "18px",
-    fontWeight: "600",
-    color: "#1f2937",
-  },
-
-  count: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#6b7280",
-    backgroundColor: "#e5e7eb",
-    padding: "4px 12px",
-    borderRadius: "20px",
-  },
-
-  bookItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "20px 24px",
-    borderBottom: "1px solid #f3f4f6",
-    transition: "all 0.2s",
-    "&:hover": {
-      backgroundColor: "#f9fafb",
-    },
-    "&:last-child": {
-      borderBottom: "none",
-    },
-  },
-
-  bookInfo: {
-    flex: 1,
-    marginRight: "20px",
-  },
-
-  bookTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    color: "#1f2937",
-    margin: "0 0 8px 0",
-  },
-
-  bookDetails: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "12px",
-    fontSize: "14px",
-    color: "#6b7280",
-  },
-
-  author: {
-    color: "#4b5563",
-  },
-
-  isbn: {
-    fontFamily: "monospace",
-    backgroundColor: "#f3f4f6",
-    padding: "2px 6px",
-    borderRadius: "4px",
-  },
-
-  category: {
-    backgroundColor: "#e0e7ff",
-    color: "#3730a3",
-    padding: "2px 8px",
-    borderRadius: "12px",
-    fontSize: "12px",
-    fontWeight: "500",
-  },
-
-  deleteButton: {
-    padding: "8px 16px",
-    fontSize: "14px",
-    fontWeight: "600",
-    backgroundColor: "#dc2626",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-    transition: "all 0.2s",
-    minWidth: "90px",
-    "&:hover": {
-      backgroundColor: "#b91c1c",
-      transform: "translateY(-1px)",
-    },
-    "&:active": {
-      transform: "translateY(0)",
-    },
-    "&:disabled": {
-      backgroundColor: "#fca5a5",
-      cursor: "not-allowed",
-      transform: "none",
-    },
-  },
-
-  "@keyframes spin": {
-    "0%": { transform: "rotate(0deg)" },
-    "100%": { transform: "rotate(360deg)" },
-  },
-};
