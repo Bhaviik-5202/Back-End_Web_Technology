@@ -111,7 +111,7 @@ router.post("/login", async (req, res) => {
 
     // generate token
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
@@ -210,7 +210,7 @@ router.post("/issue/:bookId", auth, async (req, res) => {
 
     // Log Activity
     await logActivity(
-      req.user.email,
+      currentUser.email,
       "ISSUE_BOOK",
       `Issued book: ${book.title}`,
     );
@@ -263,7 +263,10 @@ router.post("/return/:bookId", auth, async (req, res) => {
     let details = `Returned book ID: ${cleanId}`;
     if (book) details = `Returned book: ${book.title}`;
 
-    await logActivity(req.user.email, "RETURN_BOOK", details);
+    const userForLog = await User.findById(req.user.id);
+    if (userForLog) {
+        await logActivity(userForLog.email, "RETURN_BOOK", details);
+    }
 
     res.status(200).json({
       success: true,

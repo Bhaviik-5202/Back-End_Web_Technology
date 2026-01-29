@@ -27,10 +27,13 @@ app.use(express.json());
 // DB connection
 mongoose.connect(DB_URL)
   .then(() => console.log("DB connected"))
-  .catch(err => console.log(err));
+  .catch(err => {
+    console.error("❌ DB Connection Error:", err.message);
+    console.error("👉 Please ensure MongoDB is running locally on port 27017 (mongod).");
+  });
 
 app.use('/library/book', bookRoutes)
-app.use('/library/user', require("./routes/userRoutes"))
+app.use('/library/user', userRoutes)
 app.use("/library/otp", otpRoutes);
 app.use("/library/activity", require('./routes/activityRoutes'));
 

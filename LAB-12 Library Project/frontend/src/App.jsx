@@ -27,6 +27,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import MyBooks from "./pages/MyBooks";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
@@ -42,6 +43,7 @@ export default function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<RootRoute />} />
+              <Route path="/about" element={<About />} />
               <Route path="/books" element={<Books />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

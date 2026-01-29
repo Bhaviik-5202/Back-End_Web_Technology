@@ -1,8 +1,8 @@
 import api from './axios';
 
 // get all
-export const getAllBooks = async () => {
-    return await api.get('/book/all');
+export const getAllBooks = async (page = 1, limit = 12) => {
+    return await api.get(`/book/all?page=${page}&limit=${limit}`);
 };
 
 // search book

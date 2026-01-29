@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpen, User, LogOut, Home, PlusCircle, Bookmark, Trash2, Library } from "lucide-react";
+import { BookOpen, User, LogOut, Home, PlusCircle, Bookmark, Trash2, Library, Info } from "lucide-react";
 
 const Navbar = () => {
     const location = useLocation();
@@ -33,6 +33,7 @@ const Navbar = () => {
             { name: "Add Book", path: "/add-book", icon: <PlusCircle size={20} /> },
             { name: "Delete Book", path: "/delete-book", icon: <Trash2 size={20} /> },
             { name: "Manage Users", path: "/users", icon: <User size={20} /> },
+            { name: "About", path: "/about", icon: <Info size={20} /> },
         ];
     } else {
         // User Role
@@ -40,6 +41,7 @@ const Navbar = () => {
             { name: "Library", path: "/books", icon: <Library size={20} /> },
             { name: "My Issued Books", path: "/my-books", icon: <Bookmark size={20} /> },
             { name: "My Profile", path: "/profile", icon: <User size={20} /> },
+            { name: "About", path: "/about", icon: <Info size={20} /> },
         ];
     }
 

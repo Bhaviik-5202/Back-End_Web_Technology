@@ -19,6 +19,13 @@ export default function Books() {
     if (r) setRole(r);
   }, []);
 
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 1
+  });
+
   // Debounce search to prevent too many API calls
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
@@ -26,20 +33,33 @@ export default function Books() {
       try {
         let res;
         if (searchTerm.trim() === "") {
-          res = await getAllBooks();
+          res = await getAllBooks(pagination.page, pagination.limit);
         } else {
-          res = await searchBooks(searchTerm);
+          res = await searchBooks(searchTerm, pagination.page, pagination.limit);
         }
-        setBooks(res.data.data);
-      } catch (err) {
 
+        if (res.data.success && res.data.data) {
+          setBooks(res.data.data);
+          if (res.data.pagination) {
+            setPagination(prev => ({ ...prev, ...res.data.pagination }));
+          }
+        }
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm]);
+  }, [searchTerm, pagination.page]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      setPagination(prev => ({ ...prev, page: newPage }));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   const [issuingIds, setIssuingIds] = useState(new Set());
 
@@ -116,54 +136,82 @@ export default function Books() {
           <p className="text-xl">No books found matching your search.</p>
         </div>
       ) : (
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {books.map((book) => (
-            <motion.div variants={item} key={book._id}>
-              <GlassCard className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 border-t-4 border-t-blue-500/50">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="bg-blue-100/50 p-3 rounded-xl text-blue-600">
-                    <BookIcon size={24} />
+        <>
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {books.map((book) => (
+              <motion.div variants={item} key={book._id}>
+                <GlassCard className="h-full flex flex-col hover:shadow-xl transition-shadow duration-300 border-t-4 border-t-blue-500/50">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="bg-blue-100/50 p-3 rounded-xl text-blue-600">
+                      <BookIcon size={24} />
+                    </div>
+                    {book.issued && (
+                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
+                        <CheckCircle size={12} /> Issued
+                      </span>
+                    )}
                   </div>
-                  {book.issued && (
-                    <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <CheckCircle size={12} /> Issued
-                    </span>
-                  )}
-                </div>
 
-                <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1" title={book.title}>
-                  {book.title}
-                </h3>
-                <p className="text-gray-500 mb-4">{book.author}</p>
+                  <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1" title={book.title}>
+                    {book.title}
+                  </h3>
+                  <p className="text-gray-500 mb-4">{book.author}</p>
 
-                <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <span className="text-2xl font-bold text-sla-700">₹{book.price}</span>
+                  <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                    <span className="text-2xl font-bold text-sla-700">₹{book.price}</span>
 
-                  {role === 'admin' ? (
-                    <button disabled className="px-4 py-2 bg-gray-100 text-gray-400 rounded-xl cursor-not-allowed font-medium text-sm">
-                      Admin View
-                    </button>
-                  ) : (
-                    <AnimatedButton
-                      onClick={() => issueBook(book._id)}
-                      disabled={book.issued || issuingIds.has(book._id)}
-                      variant={book.issued ? "secondary" : "primary"}
-                      className={book.issued || issuingIds.has(book._id) ? "opacity-60" : ""}
-                    >
-                      {book.issued ? "Issued" : issuingIds.has(book._id) ? "Issuing..." : "Issue Now"}
-                    </AnimatedButton>
-                  )}
-                </div>
-              </GlassCard>
-            </motion.div>
-          ))}
-        </motion.div>
+                    {role === 'admin' ? (
+                      <button disabled className="px-4 py-2 bg-gray-100 text-gray-400 rounded-xl cursor-not-allowed font-medium text-sm">
+                        Admin View
+                      </button>
+                    ) : (
+                      <AnimatedButton
+                        onClick={() => issueBook(book._id)}
+                        disabled={book.issued || issuingIds.has(book._id)}
+                        variant={book.issued ? "secondary" : "primary"}
+                        className={book.issued || issuingIds.has(book._id) ? "opacity-60" : ""}
+                      >
+                        {book.issued ? "Issued" : issuingIds.has(book._id) ? "Issuing..." : "Issue Now"}
+                      </AnimatedButton>
+                    )}
+                  </div>
+                </GlassCard>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Pagination Controls */}
+          {pagination.totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+              <button
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1}
+                className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+
+              <span className="text-gray-600 font-medium">
+                Page {pagination.page} of {pagination.totalPages}
+              </span>
+
+              <button
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.totalPages}
+                className="px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
+
   );
 }

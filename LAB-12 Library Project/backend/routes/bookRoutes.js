@@ -6,13 +6,34 @@ const router = express.Router();
 
 // GET ALL BOOKS
 
+// GET ALL BOOKS (WITH PAGINATION)
 router.get("/all", async (req, res) => {
   try {
-    const books = await Book.find();
+    let { page = 1, limit = 12 } = req.query;
+    
+    // Parse to ensure integers
+    page = parseInt(page);
+    limit = parseInt(limit);
+    
+    // Calculate skip
+    const skip = (page - 1) * limit;
+
+    // Get paginated books
+    const books = await Book.find().skip(skip).limit(limit);
+    
+    // Get total count
+    const total = await Book.countDocuments();
+    const totalPages = Math.ceil(total / limit);
+
     res.status(200).json({
       success: true,
-      total: books.length,
       data: books,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages
+      }
     });
   } catch (error) {
     res.status(500).json({
