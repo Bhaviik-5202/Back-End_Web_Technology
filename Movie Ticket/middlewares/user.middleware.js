@@ -12,7 +12,7 @@ function userMiddleware(req, res, next) {
       next();
     }
   } catch (error) {
-    res.status(401).send({ error: error, massage: "unauthorized" });
+    res.status(401).send({ error: error, message: "unauthorized" });
   }
 }
 

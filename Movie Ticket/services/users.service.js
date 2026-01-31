@@ -19,7 +19,7 @@ async function getAllUsers() {
   } else {
     return {
       error: true,
-      massage: "some error occured",
+      message: "some error occured",
     };
   }
 }
@@ -30,12 +30,12 @@ async function getUserByID(id) {
     return {
       error: false,
       data,
-      massage: "user fetched success",
+      message: "user fetched success",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured",
+      message: "some error occured",
     };
   }
 }
@@ -48,18 +48,18 @@ async function userCheckLogin(formData) {
       return {
         error: false,
         data: token,
-        massage: "user fetched success",
+        message: "user fetched success",
       };
     } else {
       return {
         error: true,
-        massage: "username or password incorrect",
+        message: "username or password incorrect",
       };
     }
   } else {
     return {
       error: true,
-      massage: "username or password incorrect",
+      message: "username or password incorrect",
     };
   }
 }
@@ -70,12 +70,12 @@ async function insertUser(formData) {
     return {
       error: false,
       data,
-      massage: "user fetched success",
+      message: "user fetched success",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured",
+      message: "some error occured",
     };
   }
 }
@@ -86,12 +86,12 @@ async function updateUser(id, formData) {
     return {
       error: false,
       data,
-      massage: "user fetched success",
+      message: "user fetched success",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured",
+      message: "some error occured",
     };
   }
 }
@@ -102,12 +102,12 @@ async function deleteUser(id) {
     return {
       error: false,
       data,
-      massage: "user fetched success",
+      message: "user fetched success",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured",
+      message: "some error occured",
     };
   }
 }

@@ -1,4 +1,3 @@
-const e = require("express");
 const {
   movieGetAll,
   movieGetByID,
@@ -13,12 +12,12 @@ async function getAllMovies() {
     return {
       error: false,
       data,
-      massage: "movies fatched successfull",
+      message: "movies fetched successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured due to get all movies",
+      message: "some error occurred while getting all movies",
     };
   }
 }
@@ -29,12 +28,12 @@ async function getMovieByID(id) {
     return {
       error: false,
       data,
-      massage: "movie by id fatched successfull",
+      message: "movie fetched successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured due to get movie by id ",
+      message: "some error occurred while getting movie by id",
     };
   }
 }
@@ -45,12 +44,12 @@ async function insertMovie(formData) {
     return {
       error: false,
       data,
-      massage: "movie inserted successfull",
+      message: "movie inserted successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured due to insert movie",
+      message: "some error occurred while inserting movie",
     };
   }
 }
@@ -61,28 +60,28 @@ async function updateMovie(id, formData) {
     return {
       error: false,
       data,
-      massage: "movie update successfull",
+      message: "movie updated successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured due to update movie",
+      message: "some error occurred while updating movie",
     };
   }
 }
 
-async function deleteMovie(id, formData) {
-  const data = await movieDelete(id, formData);
+async function deleteMovie(id) {
+  const data = await movieDelete(id);
   if (data) {
     return {
       error: false,
       data,
-      massage: "movie delete successfull",
+      message: "movie deleted successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured due to delete movie",
+      message: "some error occurred while deleting movie",
     };
   }
 }

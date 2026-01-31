@@ -12,12 +12,12 @@ async function getAllMovieRating() {
     return {
       error: false,
       data,
-      massage: "fatching all movie rating successfull",
+      message: "fetched all movie ratings successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured in get all movie raing",
+      message: "some error occurred while getting all movie ratings",
     };
   }
 }
@@ -28,12 +28,12 @@ async function getByIDMovieRating(id) {
     return {
       error: false,
       data,
-      massage: "fatching  movie rating by id successfull",
+      message: "fetched movie rating successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured in get movie raing by id",
+      message: "some error occurred while getting movie rating by id",
     };
   }
 }
@@ -43,12 +43,12 @@ async function insertMovieRating(formData) {
     return {
       error: false,
       data,
-      massage: "insert movie rating successfull",
+      message: "movie rating inserted successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured in insert movie raing",
+      message: "some error occurred while inserting movie rating",
     };
   }
 }
@@ -58,12 +58,12 @@ async function updateMovieRating(id, formData) {
     return {
       error: false,
       data,
-      massage: "update movie rating successfull",
+      message: "movie rating updated successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured in updating movie raing",
+      message: "some error occurred while updating movie rating",
     };
   }
 }
@@ -73,12 +73,12 @@ async function deleteMovieRating(id) {
     return {
       error: false,
       data,
-      massage: "delete movie rating successfull",
+      message: "movie rating deleted successfully",
     };
   } else {
     return {
       error: true,
-      massage: "some error occured in deleting movie raing",
+      message: "some error occurred while deleting movie rating",
     };
   }
 }
