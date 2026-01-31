@@ -32,6 +32,7 @@ export default function Login() {
         try {
             const res = await loginUser(email, password);
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("refreshToken", res.data.refreshToken);
             localStorage.setItem("role", res.data.role);
             localStorage.setItem("email", res.data.email);
 

@@ -1,4 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Books from "./pages/Book";
+import AddBook from "./pages/AddBook";
+import DeleteBook from "./pages/DeleteBook";
+import Users from "./pages/Users";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import MyBooks from "./pages/MyBooks";
+import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
+import About from "./pages/About";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
+import { ToastProvider } from "./context/ToastContext";
+import { ConfirmationProvider } from "./context/ConfirmationContext";
 
 // Smart Route Component to handle root path logic
 const RootRoute = () => {
@@ -15,24 +31,6 @@ const RootRoute = () => {
 
   return <Navigate to="/books" replace />;
 };
-
-import Dashboard from "./pages/Dashboard";
-import Books from "./pages/Book";
-import AddBook from "./pages/AddBook";
-import DeleteBook from "./pages/DeleteBook";
-import Users from "./pages/Users";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
-import MyBooks from "./pages/MyBooks";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
-import About from "./pages/About";
-
-import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./components/Layout";
-import { ToastProvider } from "./context/ToastContext";
-import { ConfirmationProvider } from "./context/ConfirmationContext";
 
 export default function App() {
   return (

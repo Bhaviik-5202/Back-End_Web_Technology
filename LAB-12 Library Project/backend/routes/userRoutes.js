@@ -109,16 +109,24 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // generate token
+    // generate token with shorter expiry for better security
     const token = jwt.sign(
       { id: user._id, role: user.role, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "24h" },
+    );
+
+    // generate refresh token with longer expiry
+    const refreshToken = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
     );
 
     res.status(200).json({
       success: true,
       token,
+      refreshToken,
       role: user.role,
       email: user.email,
     });
@@ -256,7 +264,7 @@ router.post("/return/:bookId", auth, async (req, res) => {
     // 2. Remove from User's issuedBooks list
     // Use $pull to remove the entry with the matching bookId
     await User.findByIdAndUpdate(req.user.id, {
-      $pull: { issuedBooks: { bookId: cleanId } },
+      $pull: { issuedBooks: { bookId: new mongoose.Types.ObjectId(cleanId) } },
     });
 
     // Log Activity (fetch book title before is tricky if we don't have it, but we can look it up or just use ID. Better to have title)
@@ -275,6 +283,7 @@ router.post("/return/:bookId", auth, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
+      message: "Failed to return book",
       error: error.message,
     });
   }
@@ -374,6 +383,44 @@ router.post("/delete", auth, async (req, res) => {
     res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+});
+
+/* =====================================================
+   REFRESH TOKEN
+   POST /user/refresh-token
+   (No auth required - uses refresh token from body)
+===================================================== */
+router.post("/refresh-token", async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Refresh token is required",
+      });
+    }
+
+    // Verify the refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+
+    // Generate a new access token
+    const newToken = jwt.sign(
+      { id: decoded.id, role: decoded.role, email: decoded.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" },
+    );
+
+    res.status(200).json({
+      success: true,
+      token: newToken,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired refresh token",
     });
   }
 });

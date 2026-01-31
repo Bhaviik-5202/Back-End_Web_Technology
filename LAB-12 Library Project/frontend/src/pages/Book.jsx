@@ -163,7 +163,7 @@ export default function Books() {
                   <p className="text-gray-500 mb-4">{book.author}</p>
 
                   <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <span className="text-2xl font-bold text-sla-700">₹{book.price}</span>
+                    <span className="text-2xl font-bold text-slate-700">₹{book.price}</span>
 
                     {role === 'admin' ? (
                       <button disabled className="px-4 py-2 bg-gray-100 text-gray-400 rounded-xl cursor-not-allowed font-medium text-sm">
