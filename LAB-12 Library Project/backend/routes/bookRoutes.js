@@ -4,8 +4,6 @@ const auth = require("../middlewares/auth");
 
 const router = express.Router();
 
-// GET ALL BOOKS
-
 // GET ALL BOOKS (WITH PAGINATION)
 router.get("/all", async (req, res) => {
   try {
@@ -45,9 +43,7 @@ router.get("/all", async (req, res) => {
 });
 
 // SEARCH + PAGINATION
-// search by author name
-// /books/search?n=abc&page=1&limit=5
-
+// /book/search?n=abc&page=1&limit=5
 router.get("/search", async (req, res) => {
   try {
     const { n, page = 1, limit = 5 } = req.query;

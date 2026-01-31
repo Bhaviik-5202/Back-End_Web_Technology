@@ -14,7 +14,7 @@ export default function Users() {
         const res = await getAllUsers();
         setUsers(res.data.data);
       } catch (err) {
-        console.error("Failed to fetch users", err);
+        // Error fetching users
       } finally {
         setLoading(false);
       }

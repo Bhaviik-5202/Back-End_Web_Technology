@@ -149,7 +149,6 @@ router.post("/login", async (req, res) => {
 router.post("/issue/:bookId", auth, async (req, res) => {
   try {
     // find book by id
-    // find book by id
     const rawId = req.params.bookId;
     const cleanId = rawId.trim();
 

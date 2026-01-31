@@ -1,5 +1,4 @@
 const dotenv = require('dotenv');
-// Load env
 dotenv.config();
 
 const express = require('express');

@@ -7,8 +7,6 @@ const startCronJob = () => {
     // Run every day at midnight (00:00)
     // For testing purposes, you can change this to '* * * * *' (every minute)
     cron.schedule('0 0 * * *', async () => {
-
-
         try {
             const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             const sixDaysAgo = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000);
@@ -40,9 +38,8 @@ const startCronJob = () => {
                         text: `Hello,\n\nThe following books are due to be returned tomorrow (7 days limit):\n\n${bookTitles}\n\nPlease return or re-issue them to avoid auto-return.`
                     };
 
-                    transporter.sendMail(mailOptions, (err, info) => {
+                    transporter.sendMail(mailOptions, (err) => {
                         if (err) console.error(`Failed to send warning email to ${user.email}:`, err);
-                        else console.log(`Warning notification sent to ${user.email}`);
                     });
                 }
             }
@@ -96,15 +93,11 @@ const startCronJob = () => {
                         text: `Hello,\n\nThe following books were overdue (issued more than 7 days ago) and have been automatically returned by the system:\n\n${bookTitles}\n\nPlease visit the library if you wish to issue them again.`
                     };
 
-                    transporter.sendMail(mailOptions, (err, info) => {
+                    transporter.sendMail(mailOptions, (err) => {
                         if (err) console.error(`Failed to send email to ${user.email}:`, err);
-                        else console.log(`Overdue notification sent to ${user.email}`);
                     });
                 }
             }
-
-
-
         } catch (error) {
             console.error('Error in Auto-Return Cron Job:', error);
         }

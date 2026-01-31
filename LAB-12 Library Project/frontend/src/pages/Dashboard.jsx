@@ -79,7 +79,7 @@ export default function Dashboard() {
 
         setStats({ totalBooks, issuedBooks, activeUsers, recentActivity });
       } catch (err) {
-        console.error("Dashboard stats error", err);
+        // Error fetching stats
       } finally {
         setLoading(false);
       }

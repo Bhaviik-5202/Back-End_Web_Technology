@@ -20,6 +20,3 @@ export const addBook = async (data) => {
 
 // delete by title
 export const deleteByTitle = (title) => api.delete(`/book/by-title?title=${title}`);
-
-
-

@@ -17,7 +17,7 @@ export default function MyBooks() {
                 const res = await getMyBooks();
                 setBooks(res.data.data);
             } catch (err) {
-                console.error("Failed to fetch my books", err);
+                // Error fetching books
             } finally {
                 setLoading(false);
             }

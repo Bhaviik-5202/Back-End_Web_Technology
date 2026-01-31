@@ -45,7 +45,7 @@ export default function Books() {
           }
         }
       } catch (err) {
-        console.error(err);
+        // Error fetching books
       } finally {
         setLoading(false);
       }

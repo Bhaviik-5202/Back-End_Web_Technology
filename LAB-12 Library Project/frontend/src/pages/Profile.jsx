@@ -39,7 +39,7 @@ export default function Profile() {
                     setMyBooks(res.data.data);
                 }
             } catch (err) {
-                console.error("Failed to fetch history", err);
+                // Error fetching books
             } finally {
                 setLoading(false);
             }
